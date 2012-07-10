@@ -34,6 +34,8 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         // runtime 'mysql:mysql-connector-java:5.1.16'
+
+        compile "org.jadira.usertype:usertype.jodatime:1.9"
     }
 
     plugins {
@@ -47,5 +49,7 @@ grails.project.dependency.resolution = {
         //runtime ":yui-minify-resources:0.1.4"
 
         build ":tomcat:$grailsVersion"
+
+        compile ":joda-time:1.4"
     }
 }
