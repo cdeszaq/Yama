@@ -52,5 +52,6 @@ grails.project.dependency.resolution = {
         build ":tomcat:$grailsVersion"
 
         compile ":joda-time:1.4"
+        compile ":rabbitmq:1.0.0.RC1"
     }
 }
