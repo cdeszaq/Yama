@@ -45,9 +45,10 @@
     <orderEntry type="module-library" exported="">
       <library name="Grails User Library (Yama-grailsPlugins)">
         <CLASSES>
+          <root url="file://$USER_HOME$/.grails/2.0.4/projects/Yama/plugins/joda-time-1.4/lib" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.jadira.usertype/usertype.spi/jars/usertype.spi-1.9.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.jadira.usertype/usertype.jodatime/jars/usertype.jodatime-1.9.jar!/" />
-          <root url="file://$USER_HOME$/.grails/2.0.4/projects/Yama/plugins/joda-time-1.4/lib" />
+          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.jsoup/jsoup/jars/jsoup-1.6.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
