@@ -117,4 +117,12 @@ rabbitmq {
         password = 'guest'
         hostname = 'localhost'
     }
+    queues = {
+        exchange name: 'yama', type: topic, durable: true, {
+            pagesToPull durable: true, binding: 'pagesToPull'
+        }
+    }
+
+    // Workaround for http://jira.grails.org/browse/GPRABBITMQ-34
+    retryPolicy.maxAttempts = 3
 }
