@@ -12,27 +12,30 @@ class PageCrawlService {
     static final STALENESS = Minutes.ONE
     static rabbitQueue = "pagesToCrawl"
 
-    /** Add the url to the crawl queue.
+    /** Add the job to the crawl queue.
      *
-     * @param url Url to be crawled
+     * @param job Job for crawling. type: type of page that will be crawled, url: Url to be crawled.
      */
-    void queuePage(String url) {
-        log.trace("Queueing page: $url")
-        rabbitSend rabbitQueue, url
+    void queuePage(Map job) {
+        log.trace("Queueing page: ${job.url}")
+        rabbitSend rabbitQueue, job
     }
 
     /** Handle messages coming in from the queue.
      *
-     * @param message The URL of the page to crawl.
+     * @param message The crawl job.
      */
     void handleMessage(message) {
         crawlPage(message)
     }
 
-
-    def crawlPage(String url) {
-        log.trace("Loading page: $url")
-        Page page = Page.findOrCreateByUrl(url)
+    /** Crawl the page tha the job indicates if the page needs to be crawled.
+     *
+     * @param job Job for crawling. type: type of page that will be crawled, url: Url to be crawled.
+     */
+    def crawlPage(Map job) {
+        log.trace("Loading page: ${job.url}")
+        Page page = Page.findOrCreateByUrl(job.url)
 
         // Crawl the page if it hasn't been updated in a while
         if (needsCrawling(page)) {
@@ -72,7 +75,10 @@ class PageCrawlService {
 
         // Select the links
         List<Element> links = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
-        links.each {queuePage(it.attr("abs:href"))}
+        links.each {queuePage([
+                type: "card",
+                url: it.attr("abs:href")
+        ])}
     }
 
     /** Determine if we need to pull the page or not.
