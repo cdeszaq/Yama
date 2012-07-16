@@ -119,7 +119,7 @@ rabbitmq {
     }
     queues = {
         exchange name: 'yama', type: topic, durable: true, {
-            pagesToPull durable: true, binding: 'pagesToPull'
+            pagesToCrawl durable: true, binding: 'pagesToCrawl'
         }
     }
 
