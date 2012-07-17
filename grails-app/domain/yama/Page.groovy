@@ -7,6 +7,7 @@ class Page {
     DateTime dateCreated
     DateTime lastUpdated
 
+    PageType pageType
     String url
     String html
 

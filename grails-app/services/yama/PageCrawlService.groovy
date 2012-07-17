@@ -37,7 +37,7 @@ class PageCrawlService {
      */
     def crawlPage(Map job) {
         log.trace("Loading page: ${job.url}")
-        Page page = Page.findOrCreateByUrl(job.url)
+        Page page = Page.findOrCreateByUrlAndPageType(job.url, job.type)
 
         // Crawl the page if it hasn't been updated in a while
         if (needsCrawling(page)) {
@@ -81,7 +81,7 @@ class PageCrawlService {
         // Select the card printing links
         List<Element> links = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
         links.each {queuePage([
-                type: "card",
+                type: PageType.findByName("Card"),
                 url: it.attr("abs:href")
         ])}
     }
