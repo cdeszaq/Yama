@@ -3,3 +3,4 @@ syntax: glob
 target/
 out/
 Yama-config.groovy
+*.db
