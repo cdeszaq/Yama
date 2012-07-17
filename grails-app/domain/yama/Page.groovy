@@ -11,7 +11,7 @@ class Page {
     String html
 
     static constraints = {
-        url blank: false
+        url blank: false, unique: true
         html blank: false
     }
 
