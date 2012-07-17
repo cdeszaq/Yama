@@ -10,6 +10,8 @@ import org.jsoup.nodes.Element
 class PageCrawlService {
 
     static final STALENESS = Minutes.ONE
+    static final COOKIES = ["CardDatabaseSettings": "0=1&1=28&2=0&14=1&3=13&4=0&5=1&6=15&7=0&8=1&9=1&10=18&11=7&12=8&15=1&16=0&13=25"]
+    static final TIMEOUT = 10000 // 10 second timeout
     static rabbitQueue = "pagesToCrawl"
 
     /** Add the job to the crawl queue.
@@ -51,7 +53,10 @@ class PageCrawlService {
      */
     def updatePage(Page page) {
         log.trace("Getting page: ${page.url}")
-        Document doc = Jsoup.connect(page.url).get()
+        Document doc = Jsoup.connect(page.url)
+                .timeout(TIMEOUT)
+                .cookies(COOKIES)
+                .get()
 
         log.trace("Updating page: ${page.url}")
         page.html = doc.outerHtml()
@@ -73,7 +78,7 @@ class PageCrawlService {
         log.trace("Parseing page: ${page.url}")
         Document doc = Jsoup.parse(page.html, page.url)
 
-        // Select the links
+        // Select the card printing links
         List<Element> links = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
         links.each {queuePage([
                 type: "card",
