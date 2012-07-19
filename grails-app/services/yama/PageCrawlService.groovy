@@ -86,8 +86,10 @@ class PageCrawlService {
         // Crawl the page if it hasn't been updated in a while
         if (needsCrawling(page)) {
             log.debug("Crawling page: ${page.url}")
-            updatePage(page)
-            followLinks(page)
+            if (updatePage(page)) {
+                // Only follow the links if the update was successful
+                followLinks(page)
+            }
         }
     }
 
@@ -108,9 +110,20 @@ class PageCrawlService {
         // controlling this field, any value we set here is corrected to reality anyways so this is essentially the same
         // as marking it dirty.
 
-        log.trace("Saving page: ${page.url}")
-        if(!page.save()) {
-            log.error("Unable to save page: ${page.url}")
+        try {
+            // Only try to save the page if we still need to
+            if (needsCrawling(page.url)) {
+                log.trace("Saving page: ${page.url}")
+                page.save()
+            } else {
+                log.debug("Page already saved: ${page.url}")
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+                false // Don't keep processing
+            }
+        } catch (DataIntegrityViolationException e) {
+            log.debug("Race condition when saving page: ${page.url}")
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+            false // Don't keep processing
         }
     }
 
