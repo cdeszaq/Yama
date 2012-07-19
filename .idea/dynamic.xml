@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DynamicElementsStorage">
+    <option name="containingClasses">
+      <map>
+        <entry key="yama.Page">
+          <value>
+            <DClassElement>
+              <option name="name" value="yama.Page" />
+              <option name="myName" value="yama.Page" />
+              <option name="myMethods">
+                <set>
+                  <DMethodElement>
+                    <option name="name" value="findOrCreateByUrlAndPageType" />
+                    <option name="static" value="true" />
+                    <option name="type" value="yama.Page" />
+                    <option name="myPairs">
+                      <list>
+                        <ParamInfo>
+                          <option name="name" value="o1" />
+                          <option name="type" value="java.lang.Object" />
+                        </ParamInfo>
+                        <ParamInfo>
+                          <option name="name" value="o2" />
+                          <option name="type" value="java.lang.Object" />
+                        </ParamInfo>
+                      </list>
+                    </option>
+                    <option name="myType" value="yama.Page" />
+                    <option name="myStatic" value="true" />
+                    <option name="myName" value="findOrCreateByUrlAndPageType" />
+                  </DMethodElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+        <entry key="yama.PageCrawlService">
+          <value>
+            <DClassElement>
+              <option name="name" value="yama.PageCrawlService" />
+              <option name="myName" value="yama.PageCrawlService" />
+              <option name="myMethods">
+                <set>
+                  <DMethodElement>
+                    <option name="name" value="rabbitSend" />
+                    <option name="static" value="false" />
+                    <option name="type" value="void" />
+                    <option name="myPairs">
+                      <list>
+                        <ParamInfo>
+                          <option name="name" value="s1" />
+                          <option name="type" value="java.lang.String" />
+                        </ParamInfo>
+                        <ParamInfo>
+                          <option name="name" value="s2" />
+                          <option name="type" value="java.lang.String" />
+                        </ParamInfo>
+                      </list>
+                    </option>
+                    <option name="myType" value="void" />
+                    <option name="myStatic" value="false" />
+                    <option name="myName" value="rabbitSend" />
+                  </DMethodElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+        <entry key="yama.PageType">
+          <value>
+            <DClassElement>
+              <option name="name" value="yama.PageType" />
+              <option name="myName" value="yama.PageType" />
+              <option name="myMethods">
+                <set>
+                  <DMethodElement>
+                    <option name="name" value="findOrSaveByName" />
+                    <option name="static" value="true" />
+                    <option name="type" value="yama.PageType" />
+                    <option name="myPairs">
+                      <list>
+                        <ParamInfo>
+                          <option name="name" value="s" />
+                          <option name="type" value="java.lang.String" />
+                        </ParamInfo>
+                      </list>
+                    </option>
+                    <option name="myType" value="yama.PageType" />
+                    <option name="myStatic" value="true" />
+                    <option name="myName" value="findOrSaveByName" />
+                  </DMethodElement>
+                </set>
+              </option>
+            </DClassElement>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
+
