@@ -54,7 +54,7 @@ class PageCrawlService {
      */
     def updatePage(Page page) {
         log.trace("Getting page: ${page.url}")
-        Document doc = Jsoup.connect(page.url)
+        Document doc = Jsoup.connect(cleanUrl(page.url))
                 .timeout(TIMEOUT)
                 .cookies(COOKIES)
                 .get()
