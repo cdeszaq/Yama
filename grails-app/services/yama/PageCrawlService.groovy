@@ -94,4 +94,41 @@ class PageCrawlService {
     boolean needsCrawling(Page page) {
         !page?.lastUpdated?.isAfter(new DateTime().minus(STALENESS))
     }
+
+    /** Convenience method for needsCrawling(Page).
+     *
+     * @param url
+     * @return
+     */
+    boolean needsCrawling(URL url) {
+        needsCrawling(Page.findByUrl(url))
+    }
+
+    /** Convenience method for needsCrawling(Page).
+     *
+     * @param url
+     * @return
+     */
+    boolean needsCrawling(String url) {
+        needsCrawling(new URL(url))
+    }
+
+    /** Generate a clean and correct URI from the given URL string.
+     *
+     * @param url URL string to clean up
+     * @return A nice, clean, valid URL
+     */
+    String cleanUrl(String url) {
+        URL cleanUrl = new URL(URLDecoder.decode(url))
+        new URI(cleanUrl.protocol, cleanUrl.userInfo, cleanUrl.host, cleanUrl.port, cleanUrl.path, cleanUrl.query, null).toString()
+    }
+
+    /** Clean up a URL that is a URL and not a string
+     *
+     * @param url URL to clean
+     * @return A nice, clean, valid URL
+     */
+    String cleanUrl(URL url) {
+        cleanUrl(url.toString())
+    }
 }
