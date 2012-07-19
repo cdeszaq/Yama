@@ -52,6 +52,7 @@ grails.project.dependency.resolution = {
         build ":tomcat:$grailsVersion"
 
         compile ":joda-time:1.4"
-        compile ":rabbitmq:1.0.0.RC1"
+        //compile ":rabbitmq:1.0.0.RC1" // 1.0.0.RC1 seems to have some sort of race condition where the class isn't fully initialized
+        compile ":rabbitmq:0.3.3"
     }
 }
