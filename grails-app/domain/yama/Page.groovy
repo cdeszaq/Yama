@@ -8,11 +8,11 @@ class Page {
     DateTime lastUpdated
 
     PageType pageType
-    String url
+    URL url
     String html
 
     static constraints = {
-        url blank: false, unique: true
+        url unique: true
         html blank: false
     }
 
