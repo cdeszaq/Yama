@@ -4,15 +4,20 @@ import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
 import org.joda.time.DateTime
 
-import org.joda.time.Minutes
 import org.jsoup.nodes.Element
+import grails.converters.JSON
+
+import org.joda.time.Hours
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.transaction.interceptor.TransactionAspectSupport
 
 class PageCrawlService {
 
-    static final STALENESS = Minutes.ONE
-    static final COOKIES = ["CardDatabaseSettings": "0=1&1=28&2=0&14=1&3=13&4=0&5=1&6=15&7=0&8=1&9=1&10=18&11=7&12=8&15=1&16=0&13=25"]
-    static final TIMEOUT = 10000 // 10 second timeout
     static rabbitQueue = "pagesToCrawl"
+
+    static final STALENESS = Hours.FOUR
+    static final COOKIES = ["CardDatabaseSettings": "0=1&1=28&2=0&14=1&3=13&4=0&5=1&6=15&7=0&8=1&9=1&10=18&11=7&12=8&15=1&16=0&13="]
+    static final TIMEOUT = 30000 // 30 second timeout
 
     /** Add the job to the crawl queue.
      *
