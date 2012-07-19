@@ -9,7 +9,7 @@ class PageType implements Serializable {
 
     String name
 
-    static hasMany = [page: Page]
+    static hasMany = [pages: Page]
 
     static constraints = {
         name blank: false, unique: true
