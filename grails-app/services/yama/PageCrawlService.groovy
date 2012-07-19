@@ -38,6 +38,7 @@ class PageCrawlService {
     def crawlPage(Map job) {
         log.trace("Loading page: ${job.url}")
         Page page = Page.findOrCreateByUrlAndPageType(job.url, job.type)
+        page.pageType = job.type // Need to set manually b/c of http://jira.grails.org/browse/GRAILS-9272
 
         // Crawl the page if it hasn't been updated in a while
         if (needsCrawling(page)) {
