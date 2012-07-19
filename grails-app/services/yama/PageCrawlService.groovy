@@ -48,9 +48,9 @@ class PageCrawlService {
         }
     }
 
-    /** Pull the page from the given URL and store it in the database.
+    /** Pull the page and store it in the database.
      *
-     * @param url URL of the page to pull
+     * @param page The page to pull
      */
     def updatePage(Page page) {
         log.trace("Getting page: ${page.url}")
@@ -73,7 +73,7 @@ class PageCrawlService {
 
     /** Crawl the HTML of the given page and add interesting links to the crawl queue.
      *
-     * @param page Page to crawl.
+     * @param page Page to crawl
      */
     def followLinks(Page page) {
         log.trace("Parseing page: ${page.url}")
@@ -90,7 +90,7 @@ class PageCrawlService {
     /** Determine if we need to pull the page or not.
      *
      * @param page The page under consideration
-     * @return True if the page needs to be pulled
+     * @return True if the page needs to be crawled
      */
     boolean needsCrawling(Page page) {
         !page?.lastUpdated?.isAfter(new DateTime().minus(STALENESS))
