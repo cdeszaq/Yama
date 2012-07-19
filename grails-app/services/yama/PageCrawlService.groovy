@@ -77,7 +77,7 @@ class PageCrawlService {
      */
     def followLinks(Page page) {
         log.trace("Parseing page: ${page.url}")
-        Document doc = Jsoup.parse(page.html, page.url)
+        Document doc = Jsoup.parse(page.html, page.url.toString())
 
         // Select the card printing links
         List<Element> links = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
