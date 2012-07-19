@@ -25,7 +25,33 @@ class PageCrawlService {
      */
     void queuePage(Map job) {
         log.trace("Queueing page: ${job.url}")
-        rabbitSend rabbitQueue, job
+        rabbitSend rabbitQueue, (job as JSON).toString()
+    }
+
+    /** Queue the given URL as a card if it needs crawling.
+     *
+     * @param url Url to queue if we need to.
+     */
+    void queueCardIfNeeded(String url) {
+        if (needsCrawling(url)) {
+            queuePage([
+                    type: PageType.findOrSaveByName("Card").name,
+                    url: url
+            ])
+        }
+    }
+
+    /** Queue the given URL as a set if it needs crawling.
+     *
+     * @param url Url to queue if we need to.
+     */
+    void queueSetIfNeeded(String url) {
+        if (needsCrawling(url)) {
+            queuePage([
+                    type: PageType.findOrSaveByName("Set").name,
+                    url: url
+            ])
+        }
     }
 
     /** Handle messages coming in from the queue.
@@ -33,7 +59,19 @@ class PageCrawlService {
      * @param message The crawl job.
      */
     void handleMessage(message) {
-        crawlPage(message)
+        // Build the job map back from the message
+        def parsedMessage = JSON.parse(message.toString())
+        Map job = [type: PageType.findByName(parsedMessage.type), url: parsedMessage.url]
+
+        // Make sure we could find a page type
+        if (job.type != null) {
+            crawlPage(job)
+        } else {
+            // We don't know about that page type, so put the job back in the queue
+            // Note: Could happen if the bootstrap has not fired to populate the DB
+            log.warn("Unkown page type: ${parsedMessage.type}")
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+        }
     }
 
     /** Crawl the page tha the job indicates if the page needs to be crawled.
@@ -84,15 +122,47 @@ class PageCrawlService {
         log.trace("Parseing page: ${page.url}")
         Document doc = Jsoup.parse(page.html, page.url.toString())
 
-        // Select the card printing links
-        List<Element> links = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
-        links.each {queuePage([
-                type: PageType.findByName("Card"),
-                url: it.attr("abs:href")
-        ])}
+        // Follow links based on page type
+        switch (page.pageType) {
+            case PageType.findOrSaveByName("Card"):
+                followCardPageLinks(doc)
+                break
+            case PageType.findOrSaveByName("Set"):
+                followSetPageLinks(doc)
+                break
+            default:
+                log.warn("Unknown page type.")
+        }
     }
 
-    /** Determine if we need to pull the page or not.
+    /** Add interesting links in a Card page to the crawl queue.
+     *
+     * @param doc Document to investigate
+     */
+    def followCardPageLinks(Document doc) {
+        log.trace("Following card page links on: ${doc.baseUri()}")
+        // Queue the card printing links
+        List<Element> cardLinks = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
+        cardLinks.each { queueCardIfNeeded(it.attr("abs:href")) }
+
+        // Queue the set link for single and for flip cards
+        Element setLink = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_currentSetSymbol a[href]")[1]
+        setLink = setLink ?: doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl05_currentSetSymbol a[href]")[1]
+        queueSetIfNeeded(setLink.attr("abs:href"))
+    }
+
+    /** Add interesting links in a Set page to the crawl queue.
+     *
+     * @param doc Document to investigate
+     */
+    def followSetPageLinks(Document doc) {
+        log.trace("Following set page links on: ${doc.baseUri()}")
+        // Queue the card links
+        List<Element> cardLinks = doc.select("a[href].nameLink")
+        cardLinks.each { queueCardIfNeeded(it.attr("abs:href")) }
+    }
+
+    /** Determine if we need to crawl the page or not.
      *
      * @param page The page under consideration
      * @return True if the page needs to be crawled
