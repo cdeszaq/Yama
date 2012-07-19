@@ -7,17 +7,19 @@ import org.joda.time.DateTime
 import org.jsoup.nodes.Element
 import grails.converters.JSON
 
-import org.joda.time.Hours
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.transaction.interceptor.TransactionAspectSupport
 
 class PageCrawlService {
 
+    def grailsApplication
+
     static rabbitQueue = "pagesToCrawl"
 
-    static final STALENESS = Hours.FOUR
+    //def STALENESS = grailsApplication.config.staleness
     static final COOKIES = ["CardDatabaseSettings": "0=1&1=28&2=0&14=1&3=13&4=0&5=1&6=15&7=0&8=1&9=1&10=18&11=7&12=8&15=1&16=0&13="]
-    static final TIMEOUT = 30000 // 30 second timeout
+    //def TIMEOUT = grailsApplication.config.timeout
+
 
     /** Add the job to the crawl queue.
      *
@@ -100,7 +102,7 @@ class PageCrawlService {
     def updatePage(Page page) {
         log.trace("Getting page: ${page.url}")
         Document doc = Jsoup.connect(cleanUrl(page.url))
-                .timeout(TIMEOUT)
+                .timeout(grailsApplication.config.timeout)
                 .cookies(COOKIES)
                 .get()
 
@@ -181,7 +183,7 @@ class PageCrawlService {
      * @return True if the page needs to be crawled
      */
     boolean needsCrawling(Page page) {
-        !page?.lastUpdated?.isAfter(new DateTime().minus(STALENESS))
+        !page?.lastUpdated?.isAfter(new DateTime().minus(grailsApplication.config.staleness))
     }
 
     /** Convenience method for needsCrawling(Page).
@@ -190,7 +192,8 @@ class PageCrawlService {
      * @return
      */
     boolean needsCrawling(URL url) {
-        needsCrawling(Page.findByUrl(url))
+        Page page = Page.findByUrl(url)
+        !page || needsCrawling(page)
     }
 
     /** Convenience method for needsCrawling(Page).

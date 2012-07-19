@@ -1,3 +1,5 @@
+import org.joda.time.Hours
+
 // locations to search for config files that get merged into the main config
 // config files can either be Java properties files or ConfigSlurper scripts
 grails.config.locations = [ "classpath:${appName}-config.properties",
@@ -126,3 +128,7 @@ rabbitmq {
     // Workaround for http://jira.grails.org/browse/GPRABBITMQ-34
     retryPolicy.maxAttempts = 3
 }
+
+// App-specific
+staleness = org.joda.time.Hours.FOUR
+timeout = 30000 // 30 seconds
