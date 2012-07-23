@@ -35,6 +35,10 @@ class PageCrawlService {
      * @param url Url to queue if we need to.
      */
     void queueCardIfNeeded(String url) {
+        if (!url) {
+            // Something is wrong, we don't have a valid URL to queue if needed
+            log.error("Attempted to queue a non-URL")
+        }
         if (needsCrawling(url)) {
             queuePage([
                     type: PageType.findOrSaveByName("Card").name,
@@ -48,6 +52,10 @@ class PageCrawlService {
      * @param url Url to queue if we need to.
      */
     void queueSetIfNeeded(String url) {
+        if (!url) {
+            // Something is wrong, we don't have a valid URL to queue if needed
+            log.error("Attempted to queue a non-URL")
+        }
         if (needsCrawling(url)) {
             queuePage([
                     type: PageType.findOrSaveByName("Set").name,
@@ -158,12 +166,15 @@ class PageCrawlService {
         log.trace("Following card page links on: ${doc.baseUri()}")
         // Queue the card printing links
         List<Element> cardLinks = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_otherSetsValue a[href]")
-        cardLinks.each { queueCardIfNeeded(it.attr("abs:href")) }
+        cardLinks.each { queueCardIfNeeded(it?.attr("abs:href")) }
 
         // Queue the set link for single and for flip cards
         Element setLink = doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_currentSetSymbol a[href]")[1]
         setLink = setLink ?: doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl05_currentSetSymbol a[href]")[1]
-        queueSetIfNeeded(setLink.attr("abs:href"))
+        setLink = setLink ?: doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl06_currentSetSymbol a[href]")[1]
+        setLink = setLink ?: doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl07_currentSetSymbol a[href]")[1]
+        setLink = setLink ?: doc.select("#ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl08_currentSetSymbol a[href]")[1]
+        queueSetIfNeeded(setLink?.attr("abs:href"))
     }
 
     /** Add interesting links in a Set page to the crawl queue.
@@ -174,7 +185,7 @@ class PageCrawlService {
         log.trace("Following set page links on: ${doc.baseUri()}")
         // Queue the card links
         List<Element> cardLinks = doc.select("a[href].nameLink")
-        cardLinks.each { queueCardIfNeeded(it.attr("abs:href")) }
+        cardLinks.each { queueCardIfNeeded(it?.attr("abs:href")) }
     }
 
     /** Determine if we need to crawl the page or not.
